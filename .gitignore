@@ -22,17 +22,6 @@ target/
 .mvn
 mvnw*
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-
-### VS Code ###
-.vscode/
-
 ### generated files ###
 bin/
 gen/
