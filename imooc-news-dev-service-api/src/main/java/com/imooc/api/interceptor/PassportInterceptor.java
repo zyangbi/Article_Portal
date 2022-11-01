@@ -25,7 +25,8 @@ public class PassportInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String userIP = IPUtil.getRequestIp(request);
         if (redis.keyIsExist(BaseController.MOBILE_IP + userIP)) {
-            GraceException.displayMyCustomException(ResponseStatusEnum.SMS_NEED_WAIT_ERROR);
+            // SMS needs wait
+            GraceException.display(ResponseStatusEnum.SMS_NEED_WAIT_ERROR);
             return false;
         }
         return true;

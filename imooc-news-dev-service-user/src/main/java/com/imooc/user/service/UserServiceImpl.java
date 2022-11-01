@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 
         int result = appUserMapper.updateByPrimaryKeySelective(user);
         if (result != 1) {
-            GraceException.displayMyCustomException(ResponseStatusEnum.USER_UPDATE_ERROR);
+            GraceException.display(ResponseStatusEnum.USER_UPDATE_ERROR);
         }
     }
 

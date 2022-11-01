@@ -17,9 +17,11 @@ public class BaseController {
 
     public static final String MOBILE_SMSCODE = "mobile:sms:";
     public static final String MOBILE_IP = "mobile:ip:";
+    public static final String REDIS_USER = "user:";
     public static final String REDIS_TOKEN = "token:";
 
-    public static final Integer COOKIE_MONTH = 30 * 24 * 60 * 60;
+    public static final Integer MONTH = 30 * 24 * 60 * 60;
+    public static final Integer DAY = 24 * 60 * 60;
 
     @Value("${website.domain}")
     public String DOMAIN_NAME;

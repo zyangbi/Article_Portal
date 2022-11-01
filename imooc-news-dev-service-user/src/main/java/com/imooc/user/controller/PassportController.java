@@ -9,7 +9,9 @@ import com.imooc.pojo.bo.RegisterLoginBO;
 import com.imooc.user.service.UserService;
 import com.imooc.utils.GraceJSONResult;
 import com.imooc.utils.IPUtil;
+import com.imooc.utils.JsonUtils;
 import com.imooc.utils.RedisOperator;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,8 +56,8 @@ public class PassportController extends BaseController implements PassportContro
         // 1. verify SMS code
         String mobile = registerLoginBO.getMobile();
         String smsCode = registerLoginBO.getSmsCode();
-        if (!redis.keyIsExist(MOBILE_SMSCODE + mobile) ||
-                !smsCode.equalsIgnoreCase(redis.get(MOBILE_SMSCODE + mobile))) {
+        String redisSMS = redis.get(MOBILE_SMSCODE + mobile);
+        if (StringUtils.isBlank(redisSMS) || !StringUtils.equalsIgnoreCase(smsCode, redisSMS)) {
             return GraceJSONResult.errorCustom(ResponseStatusEnum.SMS_CODE_ERROR);
         }
 
@@ -69,19 +71,33 @@ public class PassportController extends BaseController implements PassportContro
             return GraceJSONResult.errorCustom(ResponseStatusEnum.USER_FROZEN);
         }
 
-        // 3. Set token in Redis
+        // 3. Set Redis
         String token = UUID.randomUUID().toString().trim();
         String id = user.getId();
-        redis.set(REDIS_TOKEN + id, token);
+        redis.set(REDIS_TOKEN + id, token, MONTH);
+        redis.set(REDIS_USER + id, JsonUtils.objectToJson(user), MONTH);
 
         // 4. Send cookie with token and id
-        setCookie("utoken", token, request, response, COOKIE_MONTH);
-        setCookie("uid", id, request, response, COOKIE_MONTH);
+        setCookie("utoken", token, request, response, MONTH);
+        setCookie("uid", id, request, response, MONTH);
 
         // 5. Delete SMS in redis
         redis.del(MOBILE_SMSCODE + mobile);
 
         return GraceJSONResult.ok(user.getActiveStatus());
+    }
 
+    @Override
+    public GraceJSONResult logout(String userId,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response) {
+        // delete cookie
+        setCookie("utoken", "", request, response, MONTH);
+        setCookie("uid", "", request, response, MONTH);
+
+        // delete redis token
+        redis.del(REDIS_TOKEN + userId);
+
+        return GraceJSONResult.ok();
     }
 }

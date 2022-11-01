@@ -27,4 +27,10 @@ public interface PassportControllerApi {
                                    HttpServletRequest request,
                                    HttpServletResponse response);
 
+    @ApiOperation(value = "log out", notes = "log out", httpMethod = "POST")
+    @PostMapping("/logout")
+    public GraceJSONResult logout(@RequestParam @NotBlank String userId,
+                                  HttpServletRequest request,
+                                  HttpServletResponse response);
+
 }
