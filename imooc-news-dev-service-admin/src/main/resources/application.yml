@@ -7,7 +7,7 @@ spring:
   profiles:
     active: dev
   application:
-    name: service-user
+    name: service-admin
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
@@ -30,6 +30,8 @@ spring:
 mybatis:
   type-aliases-package: com.imooc.pojo
   mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 mapper:
   mappers: com.imooc.my.mapper.MyMapper
   not-empty: false

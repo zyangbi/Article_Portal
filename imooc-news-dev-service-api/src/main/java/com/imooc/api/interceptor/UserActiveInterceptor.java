@@ -24,7 +24,7 @@ public class UserActiveInterceptor extends BaseInterceptor implements HandlerInt
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String userId = request.getHeader("headerUserId");
         AppUser user = null;
-        String userJson = redis.get(REDIS_USER + userId);
+        String userJson = redis.get(REDIS_USER_INFO + userId);
         if (StringUtils.isNotBlank(userJson)) {
             user = JsonUtils.jsonToPojo(userJson, AppUser.class);
         } else {

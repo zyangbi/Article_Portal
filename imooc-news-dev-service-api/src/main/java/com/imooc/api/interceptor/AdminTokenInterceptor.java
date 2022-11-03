@@ -8,13 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class UserInterceptor extends BaseInterceptor implements HandlerInterceptor {
-
+public class AdminTokenInterceptor extends BaseInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String userId = request.getHeader("headerUserId");
-        String userToken = request.getHeader("headerUserToken");
-        return verifyUserIdToken(userId, userToken, REDIS_TOKEN);
+        String adminId = request.getHeader("adminUserId");
+        String adminToken = request.getHeader("adminUserToken");
+        return verifyIdToken(adminId, adminToken, REDIS_ADMIN_TOKEN);
     }
 
     @Override

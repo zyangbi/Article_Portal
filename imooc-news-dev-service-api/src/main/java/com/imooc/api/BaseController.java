@@ -15,11 +15,13 @@ import java.util.Map;
 
 public class BaseController {
 
-    public static final String MOBILE_SMSCODE = "mobile:sms:";
-    public static final String MOBILE_IP = "mobile:ip:";
-    public static final String REDIS_USER = "user:";
-    public static final String REDIS_TOKEN = "token:";
-
+    public static final String MOBILE_SMSCODE = "sms:mobile:";
+    public static final String MOBILE_IP = "ip:mobile:";
+    public static final String REDIS_USER_INFO = "info:user:";
+    public static final String REDIS_ADMIN_TOKEN = "token:admin:";
+    public static final String REDIS_USER_TOKEN = "token:user:";
+    public static final Integer PAGE_DEFAULT = 0;
+    public static final Integer PAGE_SIZE_DEFAULT = 10;
     public static final Integer MONTH = 30 * 24 * 60 * 60;
     public static final Integer DAY = 24 * 60 * 60;
 
@@ -50,7 +52,17 @@ public class BaseController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
 
+    public void deleteCookie(String cookieName,
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
+        try {
+            String cookieValue = URLEncoder.encode("", "utf-8");
+            setCookie(cookieName, cookieValue, request, response, 0);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
 }

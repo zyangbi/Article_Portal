@@ -74,8 +74,8 @@ public class PassportController extends BaseController implements PassportContro
         // 3. Set Redis
         String token = UUID.randomUUID().toString().trim();
         String id = user.getId();
-        redis.set(REDIS_TOKEN + id, token, MONTH);
-        redis.set(REDIS_USER + id, JsonUtils.objectToJson(user), MONTH);
+        redis.set(REDIS_USER_TOKEN + id, token, MONTH);
+        redis.set(REDIS_USER_INFO + id, JsonUtils.objectToJson(user), MONTH);
 
         // 4. Send cookie with token and id
         setCookie("utoken", token, request, response, MONTH);
@@ -96,7 +96,7 @@ public class PassportController extends BaseController implements PassportContro
         setCookie("uid", "", request, response, MONTH);
 
         // delete redis token
-        redis.del(REDIS_TOKEN + userId);
+        redis.del(REDIS_USER_TOKEN + userId);
 
         return GraceJSONResult.ok();
     }

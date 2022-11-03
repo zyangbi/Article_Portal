@@ -12,7 +12,8 @@ public class GraceExceptionHandler {
     @ExceptionHandler(MyCustomException.class)
     @ResponseBody
     public GraceJSONResult MyCustomExceptionHandler(MyCustomException myCustomException) {
-        myCustomException.printStackTrace();
+        String errorMsg = myCustomException.getMessage();
+        System.out.println(errorMsg);
         return GraceJSONResult.errorCustom(myCustomException.getResponseStatusEnum());
     }
 

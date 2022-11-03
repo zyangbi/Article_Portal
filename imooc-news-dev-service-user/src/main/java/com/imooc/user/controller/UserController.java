@@ -49,16 +49,16 @@ public class UserController extends BaseController implements UserControllerApi 
 
         // first delete
         String userId = updateUserInfoBO.getId();
-        redis.del(REDIS_USER + userId);
+        redis.del(REDIS_USER_INFO + userId);
 
         // update user info in database
         userService.updateUser(updateUserInfoBO);
         try {
             Thread.sleep(1000);
             // second delete
-            redis.del(REDIS_USER + userId);
+            redis.del(REDIS_USER_INFO + userId);
             AppUser user = userService.getUser(userId);
-            redis.set(REDIS_USER + userId, JsonUtils.objectToJson(user), MONTH);
+            redis.set(REDIS_USER_INFO + userId, JsonUtils.objectToJson(user), MONTH);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -67,7 +67,7 @@ public class UserController extends BaseController implements UserControllerApi 
 
     private AppUser getUser(String userId) {
         AppUser user;
-        String userJson = redis.get(REDIS_USER + userId);
+        String userJson = redis.get(REDIS_USER_INFO + userId);
         if (StringUtils.isNotBlank(userJson)) {
             // user in redis
             user = JsonUtils.jsonToPojo(userJson, AppUser.class);
@@ -75,7 +75,7 @@ public class UserController extends BaseController implements UserControllerApi 
             user = userService.getUser(userId);
             if (user != null) {
                 // user not in redis
-                redis.set(REDIS_USER + userId, JsonUtils.objectToJson(user), MONTH);
+                redis.set(REDIS_USER_INFO + userId, JsonUtils.objectToJson(user), MONTH);
             } else {
                 // user doesn't exit
                 GraceException.display(ResponseStatusEnum.USER_NOT_EXIST_ERROR);

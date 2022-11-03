@@ -7,13 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class BaseInterceptor {
-    public static final String REDIS_TOKEN = "token:";
-    public static final String REDIS_USER = "user:";
+    public static final String REDIS_USER_TOKEN = "token:user:";
+    public static final String REDIS_USER_INFO = "info:user:";
+    public static final String REDIS_ADMIN_TOKEN = "token:admin:";
 
     @Autowired
     private RedisOperator redis;
 
-    public boolean verifyUserIdToken(String id, String token, String redis_prefix) {
+    public boolean verifyIdToken(String id, String token, String redis_prefix) {
         if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(token)) {
             String redis_token = redis.get(redis_prefix + id);
             if (StringUtils.isNotBlank(redis_token)) {

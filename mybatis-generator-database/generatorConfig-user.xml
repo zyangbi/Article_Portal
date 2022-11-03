@@ -16,7 +16,7 @@
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://localhost:3306/imooc-news-dev"
                         userId="root"
-                        password="protect">
+                        password="root">
         </jdbcConnection>
 
         <!-- 对应生成的pojo所在包 -->
