@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
-@ComponentScan("com.imooc")
+@ComponentScan({"com.imooc", "org.n3r.idworker"})
 @MapperScan(basePackages = "com.imooc.user.mapper")
 public class Application {
     public static void main(String[] args) {

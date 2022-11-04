@@ -16,7 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-public class Swagger2 {
+public class SwaggerConfig {
 
 //    http://localhost:8088/swagger-ui.html     原路径
 //    http://localhost:8088/doc.html     原路径
