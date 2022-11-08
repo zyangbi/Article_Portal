@@ -28,7 +28,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/adminMng/adminIsExist")
                 .addPathPatterns("/adminMng/addNewAdmin")
                 .addPathPatterns("/adminMng/getAdminList")
-                .addPathPatterns("/adminMng/adminLogout");
+                .addPathPatterns("/adminMng/adminLogout")
+                .addPathPatterns("/friendLinkMng/saveOrUpdateFriendLink")
+                .addPathPatterns("/friendLinkMng/getFriendLinkList")
+                .addPathPatterns("/friendLinkMng/delete");
+
     }
 
 }

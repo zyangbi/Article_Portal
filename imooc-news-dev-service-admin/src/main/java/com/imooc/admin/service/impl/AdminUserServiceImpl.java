@@ -1,8 +1,9 @@
-package com.imooc.admin.service;
+package com.imooc.admin.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.imooc.admin.mapper.AdminUserMapper;
+import com.imooc.admin.service.AdminUserService;
 import com.imooc.enums.ResponseStatusEnum;
 import com.imooc.exception.GraceException;
 import com.imooc.pojo.AdminUser;
