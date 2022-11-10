@@ -20,6 +20,7 @@ public class BaseController {
     public static final String REDIS_USER_INFO = "info:user:";
     public static final String REDIS_ADMIN_TOKEN = "token:admin:";
     public static final String REDIS_USER_TOKEN = "token:user:";
+    public static final String REDIS_CATEGORY = "category:";
     public static final Integer PAGE_DEFAULT = 0;
     public static final Integer PAGE_SIZE_DEFAULT = 10;
     public static final Integer MONTH = 30 * 24 * 60 * 60;

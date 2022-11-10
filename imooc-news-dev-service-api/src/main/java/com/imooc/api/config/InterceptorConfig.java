@@ -36,7 +36,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/friendLinkMng/delete")
                 .addPathPatterns("/appUser/queryAll")
                 .addPathPatterns("/appUser/userDetail")
-                .addPathPatterns("/appUser/freezeUserOrNot");
+                .addPathPatterns("/appUser/freezeUserOrNot")
+                .addPathPatterns("/categoryMng/saveOrUpdateCategory")
+                .addPathPatterns("/categoryMng/getCatList");
+
 
     }
 
