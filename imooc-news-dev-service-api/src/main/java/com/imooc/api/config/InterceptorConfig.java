@@ -21,9 +21,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(passportInterceptor)
                 .addPathPatterns("/passport/getSMSCode");
+
         registry.addInterceptor(userTokenInterceptor)
                 .addPathPatterns("/user/getAccountInfo")
                 .addPathPatterns("/user/updateUserInfo");
+
         registry.addInterceptor(adminTokenInterceptor)
                 .addPathPatterns("/adminMng/adminIsExist")
                 .addPathPatterns("/adminMng/addNewAdmin")
@@ -31,7 +33,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/adminMng/adminLogout")
                 .addPathPatterns("/friendLinkMng/saveOrUpdateFriendLink")
                 .addPathPatterns("/friendLinkMng/getFriendLinkList")
-                .addPathPatterns("/friendLinkMng/delete");
+                .addPathPatterns("/friendLinkMng/delete")
+                .addPathPatterns("/appUser/queryAll")
+                .addPathPatterns("/appUser/userDetail")
+                .addPathPatterns("/appUser/freezeUserOrNot");
 
     }
 
