@@ -12,4 +12,6 @@ public interface FriendLinkService {
 
     public void deleteFriendLink(String id);
 
+    public List<FriendLinkMO> getPortalFriendLinkList();
+
 }

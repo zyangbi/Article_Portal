@@ -47,4 +47,10 @@ public class FriendLinkMngController extends BaseController implements FriendLin
         friendLinkService.deleteFriendLink(linkId);
         return GraceJSONResult.ok();
     }
+
+    @Override
+    public GraceJSONResult getPortalFriendLinkList() {
+        List<FriendLinkMO> list = friendLinkService.getPortalFriendLinkList();
+        return GraceJSONResult.ok(list);
+    }
 }
