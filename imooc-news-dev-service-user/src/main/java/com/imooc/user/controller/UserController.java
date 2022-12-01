@@ -7,6 +7,7 @@ import com.imooc.exception.GraceException;
 import com.imooc.pojo.AppUser;
 import com.imooc.pojo.bo.UpdateUserInfoBO;
 import com.imooc.pojo.vo.AccountInfoVO;
+import com.imooc.pojo.vo.AppUserVO;
 import com.imooc.pojo.vo.UserInfoVO;
 import com.imooc.user.service.UserService;
 import com.imooc.utils.GraceJSONResult;
@@ -17,6 +18,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class UserController extends BaseController implements UserControllerApi {
@@ -65,6 +69,17 @@ public class UserController extends BaseController implements UserControllerApi 
         return GraceJSONResult.ok();
     }
 
+    @Override
+    public GraceJSONResult getUserVOs(String userIds) {
+        List<AppUserVO> userVOList = new ArrayList<>();
+        List<String> userIdList = JsonUtils.jsonToList(userIds, String.class);
+        for (String userId : userIdList) {
+            AppUserVO userVO = getUserVO(userId);
+            userVOList.add(userVO);
+        }
+        return GraceJSONResult.ok(userVOList);
+    }
+
     private AppUser getUser(String userId) {
         AppUser user;
         String userJson = redis.get(REDIS_USER_INFO + userId);
@@ -84,4 +99,10 @@ public class UserController extends BaseController implements UserControllerApi 
         return user;
     }
 
+    private AppUserVO getUserVO(String userId) {
+        AppUser user = getUser(userId);
+        AppUserVO userVO = new AppUserVO();
+        BeanUtils.copyProperties(user, userVO);
+        return userVO;
+    }
 }

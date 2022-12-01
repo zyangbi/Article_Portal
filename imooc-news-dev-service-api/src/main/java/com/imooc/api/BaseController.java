@@ -29,6 +29,20 @@ public class BaseController {
     @Value("${website.domain}")
     public String DOMAIN_NAME;
 
+    public Integer setPage(Integer page) {
+        if (page == null) {
+            page = PAGE_DEFAULT;
+        }
+        return page;
+    }
+
+    public Integer setPageSize(Integer pageSize) {
+        if (pageSize == null) {
+            pageSize = PAGE_SIZE_DEFAULT;
+        }
+        return pageSize;
+    }
+
     public Map<String, String> getErrorMap(BindingResult result) {
         Map<String, String> map = new HashMap<>();
         List<FieldError> errorList = result.getFieldErrors();

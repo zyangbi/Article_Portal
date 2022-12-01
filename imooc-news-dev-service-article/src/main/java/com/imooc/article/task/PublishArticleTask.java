@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.time.LocalDateTime;
-
 @Configuration
 @EnableScheduling
 public class PublishArticleTask {
@@ -17,7 +15,6 @@ public class PublishArticleTask {
     @Scheduled(cron = "0/30 * * * * ?")
     public void publishArticle() {
         articleService.updateIsAppointToPublish();
-        System.out.println(LocalDateTime.now());
     }
 
 }

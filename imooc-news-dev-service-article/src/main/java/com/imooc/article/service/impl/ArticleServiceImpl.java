@@ -93,6 +93,44 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         return setPagedGridResult(list);
     }
 
+    @Override
+    public PagedGridResult getArticleList(String keyword, Integer category, Integer page, Integer pageSize) {
+        Example example = new Example(Article.class);
+        example.orderBy("createTime").desc();
+        Example.Criteria criteria = example.createCriteria();
+
+        if (StringUtils.isNotBlank(keyword)) {
+            criteria.andLike("title", "%" + keyword + "%");
+        }
+        if (category != null) {
+            criteria.andEqualTo("categoryId", category);
+        }
+
+        criteria.andEqualTo("isDelete", YesOrNo.NO.type);
+        criteria.andEqualTo("isAppoint", YesOrNo.NO.type);
+        criteria.andEqualTo("articleStatus", ArticleReviewStatus.SUCCESS.type);
+
+        PageHelper.startPage(page, pageSize);
+        List<Article> list = articleMapper.selectByExample(example);
+        return setPagedGridResult(list);
+    }
+
+    @Override
+    public PagedGridResult getArticleListByPublisher(String publisherId, Integer page, Integer pageSize) {
+        Example example = new Example(Article.class);
+        example.orderBy("createTime").desc();
+        Example.Criteria criteria = example.createCriteria();
+
+        criteria.andEqualTo("publishUserId", publisherId);
+        criteria.andEqualTo("isDelete", YesOrNo.NO.type);
+        criteria.andEqualTo("isAppoint", YesOrNo.NO.type);
+        criteria.andEqualTo("articleStatus", ArticleReviewStatus.SUCCESS.type);
+
+        PageHelper.startPage(page, pageSize);
+        List<Article> list = articleMapper.selectByExample(example);
+        return setPagedGridResult(list);
+    }
+
     @Transactional
     @Override
     public void deleteArticle(String userId, String articleId) {

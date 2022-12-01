@@ -11,8 +11,14 @@ public interface ArticleService {
 
     public void updateIsAppointToPublish();
 
+    // admin
     public PagedGridResult getArticleList(String userId, String keyword, Integer status,
                                           Date startDate, Date endDate, Integer page, Integer pageSize);
+
+    // portal
+    public PagedGridResult getArticleList(String keyword, Integer category, Integer page, Integer pageSize);
+
+    public PagedGridResult getArticleListByPublisher(String publisherId, Integer page, Integer pageSize);
 
     public void deleteArticle(String userId, String articleId);
 
