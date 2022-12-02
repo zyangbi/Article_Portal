@@ -3,7 +3,7 @@ package com.imooc.pojo;
 import javax.persistence.Column;
 import javax.persistence.Id;
 
-public class Fans {
+public class Fan {
     @Id
     private String id;
 

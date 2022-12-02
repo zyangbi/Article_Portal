@@ -8,7 +8,6 @@ import com.imooc.pojo.AppUser;
 import com.imooc.pojo.bo.UpdateUserInfoBO;
 import com.imooc.pojo.vo.AccountInfoVO;
 import com.imooc.pojo.vo.AppUserVO;
-import com.imooc.pojo.vo.UserInfoVO;
 import com.imooc.user.service.UserService;
 import com.imooc.utils.GraceJSONResult;
 import com.imooc.utils.JsonUtils;
@@ -40,9 +39,11 @@ public class UserController extends BaseController implements UserControllerApi 
     @Override
     public GraceJSONResult getUserInfo(String userId) {
         AppUser user = getUser(userId);
-        UserInfoVO userInfo = new UserInfoVO();
-        BeanUtils.copyProperties(user, userInfo);
-        return GraceJSONResult.ok(userInfo);
+        AppUserVO userVO = new AppUserVO();
+        BeanUtils.copyProperties(user, userVO);
+        userVO.setMyFansCounts(getCountFromRedis(REDIS_FANS_COUNT + userId));
+        userVO.setMyFollowCounts(getCountFromRedis(REDIS_FOLLOW_COUNT + userId));
+        return GraceJSONResult.ok(userVO);
     }
 
     @Override
@@ -78,6 +79,14 @@ public class UserController extends BaseController implements UserControllerApi 
             userVOList.add(userVO);
         }
         return GraceJSONResult.ok(userVOList);
+    }
+
+    private Integer getCountFromRedis(String key) {
+        String countStr = redis.get(key);
+        if (StringUtils.isBlank(countStr)) {
+            countStr = "0";
+        }
+        return Integer.valueOf(countStr);
     }
 
     private AppUser getUser(String userId) {

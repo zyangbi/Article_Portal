@@ -2,6 +2,7 @@ package com.imooc.api.config;
 
 import com.imooc.api.interceptor.AdminTokenInterceptor;
 import com.imooc.api.interceptor.PassportInterceptor;
+import com.imooc.api.interceptor.UserActiveInterceptor;
 import com.imooc.api.interceptor.UserTokenInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Autowired
     private UserTokenInterceptor userTokenInterceptor;
     @Autowired
+    private UserActiveInterceptor userActiveInterceptor;
+    @Autowired
     private AdminTokenInterceptor adminTokenInterceptor;
 
     @Override
@@ -24,7 +27,13 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(userTokenInterceptor)
                 .addPathPatterns("/user/getAccountInfo")
-                .addPathPatterns("/user/updateUserInfo");
+                .addPathPatterns("/user/updateUserInfo")
+                .addPathPatterns("/fans/follow")
+                .addPathPatterns("/fans/unfollow");
+
+        registry.addInterceptor(userActiveInterceptor)
+                .addPathPatterns("/fans/follow")
+                .addPathPatterns("/fans/unfollow");
 
         registry.addInterceptor(adminTokenInterceptor)
                 .addPathPatterns("/adminMng/adminIsExist")

@@ -18,4 +18,7 @@ public class BaseService {
         return result;
     }
 
+    public static final String REDIS_FANS_COUNT = "count:fans:";
+    public static final String REDIS_FOLLOW_COUNT = "count:follow:";
+
 }

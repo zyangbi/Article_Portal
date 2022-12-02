@@ -1,9 +1,9 @@
 package com.imooc.user.mapper;
 
 import com.imooc.my.mapper.MyMapper;
-import com.imooc.pojo.Fans;
+import com.imooc.pojo.Fan;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FansMapper extends MyMapper<Fans> {
+public interface FanMapper extends MyMapper<Fan> {
 }

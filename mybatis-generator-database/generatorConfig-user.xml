@@ -31,7 +31,7 @@
 
         <!-- 数据库表 -->
         <table tableName="app_user"></table>
-        <table tableName="fans"></table>
+        <table tableName="fan"></table>
 
     </context>
 </generatorConfiguration>

@@ -14,7 +14,6 @@ public class UpdateUserInfoBO {
     @Length(max = 12, message = "用户昵称不能超过12位")
     private String nickname;
 
-    @NotBlank(message = "用户头像不能为空")
     private String face;
 
     @NotBlank(message = "真实姓名不能为空")
