@@ -14,8 +14,8 @@ import javax.validation.constraints.NotBlank;
 @RequestMapping("/portal/article")
 public interface ArticlePortalControllerApi {
 
-    @GetMapping("list")
-    @ApiOperation(value = "article list on portal", notes = "article list on portal", httpMethod = "GET")
+    @GetMapping("/list")
+    @ApiOperation(value = "article list on portal", httpMethod = "GET")
     public GraceJSONResult getArticleList(@RequestParam String keyword,
                                           @RequestParam Integer category,
                                           @ApiParam(required = false)
@@ -23,13 +23,16 @@ public interface ArticlePortalControllerApi {
                                           @ApiParam(required = false)
                                           @RequestParam Integer pageSize);
 
-    @GetMapping("queryArticleListOfWriter")
-    @ApiOperation(value = "article list of a writer", notes = "article list of a writer", httpMethod = "GET")
+    @GetMapping("/queryArticleListOfWriter")
+    @ApiOperation(value = "article list of a writer", httpMethod = "GET")
     public GraceJSONResult getArticleListByWriter(@NotBlank String writerId,
                                                   @ApiParam(required = false)
                                                   @RequestParam Integer page,
                                                   @ApiParam(required = false)
                                                   @RequestParam Integer pageSize);
 
+    @GetMapping("/detail")
+    @ApiOperation(value = "get article detail", httpMethod = "GET")
+    public GraceJSONResult getArticleDetail(@RequestParam @NotBlank String articleId);
 
 }

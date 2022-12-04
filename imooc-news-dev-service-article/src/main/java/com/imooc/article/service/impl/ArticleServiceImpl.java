@@ -61,6 +61,16 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
     }
 
     @Override
+    public Article getArticle(String articleId) {
+        Article article = new Article();
+        article.setId(articleId);
+        article.setIsDelete(YesOrNo.NO.type);
+        article.setIsAppoint(YesOrNo.NO.type);
+        article.setArticleStatus(ArticleReviewStatus.SUCCESS.type);
+        return articleMapper.selectOne(article);
+    }
+
+    @Override
     public PagedGridResult getArticleList(String userId, String keyword, Integer status,
                                           Date startDate, Date endDate, Integer page, Integer pageSize) {
         Example example = new Example(Article.class);

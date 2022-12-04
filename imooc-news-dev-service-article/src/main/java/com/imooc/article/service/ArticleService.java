@@ -1,5 +1,6 @@
 package com.imooc.article.service;
 
+import com.imooc.pojo.Article;
 import com.imooc.pojo.bo.ArticleBO;
 import com.imooc.utils.PagedGridResult;
 
@@ -19,6 +20,8 @@ public interface ArticleService {
     public PagedGridResult getArticleList(String keyword, Integer category, Integer page, Integer pageSize);
 
     public PagedGridResult getArticleListByPublisher(String publisherId, Integer page, Integer pageSize);
+
+    public Article getArticle(String articleId);
 
     public void deleteArticle(String userId, String articleId);
 
