@@ -1,9 +1,6 @@
 package com.imooc.api.config;
 
-import com.imooc.api.interceptor.AdminTokenInterceptor;
-import com.imooc.api.interceptor.PassportInterceptor;
-import com.imooc.api.interceptor.UserActiveInterceptor;
-import com.imooc.api.interceptor.UserTokenInterceptor;
+import com.imooc.api.interceptor.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -19,6 +16,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private UserActiveInterceptor userActiveInterceptor;
     @Autowired
     private AdminTokenInterceptor adminTokenInterceptor;
+    @Autowired
+    private ArticleReadInterceptor articleReadInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -49,6 +48,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/categoryMng/saveOrUpdateCategory")
                 .addPathPatterns("/categoryMng/getCatList");
 
+        registry.addInterceptor(articleReadInterceptor)
+                .addPathPatterns("/portal/article/readArticle");
 
     }
 

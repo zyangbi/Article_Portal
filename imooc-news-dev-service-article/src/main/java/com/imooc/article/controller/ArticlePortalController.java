@@ -7,14 +7,14 @@ import com.imooc.pojo.Article;
 import com.imooc.pojo.vo.AppUserVO;
 import com.imooc.pojo.vo.ArticleDetailVO;
 import com.imooc.pojo.vo.IndexArticleVO;
-import com.imooc.utils.GraceJSONResult;
-import com.imooc.utils.JsonUtils;
-import com.imooc.utils.PagedGridResult;
+import com.imooc.utils.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +27,8 @@ public class ArticlePortalController extends BaseController implements ArticlePo
     private ArticleService articleService;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private RedisOperator redis;
 
     @Override
     public GraceJSONResult getArticleList(String keyword, Integer category, Integer page, Integer pageSize) {
@@ -59,22 +61,67 @@ public class ArticlePortalController extends BaseController implements ArticlePo
         List<AppUserVO> appUserVOList = getPublisherList(articleList);
         String publisherUserName = appUserVOList.get(0).getNickname();
 
-        // 3. Merge into articleDetailVO
+        // 3. Get read count
+        Integer readCount = getCountFromRedis(REDIS_READ_COUNT + articleId);
+
+        // 4. Return articleDetailVO
         ArticleDetailVO articleDetailVO = new ArticleDetailVO();
         BeanUtils.copyProperties(article, articleDetailVO);
         articleDetailVO.setPublishUserName(publisherUserName);
+        articleDetailVO.setReadCounts(readCount);
         return GraceJSONResult.ok(articleDetailVO);
+    }
+
+    @Override
+    public GraceJSONResult increaseReadCount(String articleId, HttpServletRequest request) {
+        redis.increment(REDIS_READ_COUNT + articleId, 1);
+        String ip = IPUtil.getRequestIp(request);
+        redis.set(REDIS_READ_IP + ip, ip);
+        return GraceJSONResult.ok();
+    }
+
+    private PagedGridResult getArticleVOList(PagedGridResult pagedGridResult) {
+        // 1. Get article list
+        List<Article> articleList = (List<Article>) pagedGridResult.getRows();
+        // 2. Get publisher list
+        List<AppUserVO> publisherList = getPublisherList(articleList);
+        // 3. Get read count list
+        List<Integer> readCountList = getReadCountList(articleList);
+
+        // 4. Merge lists into indexArticleVO list
+        List<IndexArticleVO> indexArticleVOList = new ArrayList<>();
+        for (int i = 0; i < articleList.size(); ++i) {
+            Article article = articleList.get(i);
+
+            IndexArticleVO indexArticleVO = new IndexArticleVO();
+            // set article
+            BeanUtils.copyProperties(article, indexArticleVO);
+            // set publisher
+            for (AppUserVO publisher : publisherList) {
+                if (publisher.getId().equalsIgnoreCase(article.getPublishUserId())) {
+                    indexArticleVO.setPublisherVO(publisher);
+                }
+            }
+            // set read count
+            indexArticleVO.setReadCounts(readCountList.get(i));
+
+            indexArticleVOList.add(indexArticleVO);
+        }
+
+        pagedGridResult.setRows(indexArticleVOList);
+        return pagedGridResult;
     }
 
     private List<AppUserVO> getPublisherList(List<Article> articleList) {
         // 1. Get publisher id set
-        Set<String> idSet = new HashSet<>();
+        Set<String> publisherIdSet = new HashSet<>();
         for (Article article : articleList) {
-            idSet.add(article.getPublishUserId());
+            publisherIdSet.add(article.getPublishUserId());
         }
 
         // 2. Get publisher list by requesting UserController
-        String publisherVOListUrl = "http://user.imoocnews.com:8003/user/queryByIds?userIds=" + JsonUtils.objectToJson(idSet);
+        String publisherVOListUrl = "http://user.imoocnews.com:8003/user/queryByIds?userIds="
+                + JsonUtils.objectToJson(publisherIdSet);
         GraceJSONResult responseBody = restTemplate.getForEntity(publisherVOListUrl, GraceJSONResult.class).getBody();
 
         List<AppUserVO> publisherVOList = null;
@@ -85,30 +132,24 @@ public class ArticlePortalController extends BaseController implements ArticlePo
         return publisherVOList;
     }
 
-    private PagedGridResult getArticleVOList(PagedGridResult pagedGridResult) {
-        // 1. Get article list
-        List<Article> articleList = (List<Article>) pagedGridResult.getRows();
-
-        // 2. Get publisher list
-        List<AppUserVO> publisherList = getPublisherList(articleList);
-
-        // 3. Merge article and publisherVO lists into indexArticleVOList
-        List<IndexArticleVO> indexArticleVOList = new ArrayList<>();
+    private List<Integer> getReadCountList(List<Article> articleList) {
+        // 1. Get read count from Redis in batch
+        List<String> keyList = new ArrayList<>();
         for (Article article : articleList) {
-            IndexArticleVO indexArticleVO = new IndexArticleVO();
-            // copy article
-            BeanUtils.copyProperties(article, indexArticleVO);
-            // copy publisherVO
-            for (AppUserVO publisher : publisherList) {
-                if (publisher.getId().equalsIgnoreCase(article.getPublishUserId())) {
-                    indexArticleVO.setPublisherVO(publisher);
-                }
-            }
-            indexArticleVOList.add(indexArticleVO);
+            keyList.add(REDIS_READ_COUNT + article.getId());
         }
+        List<String> countStrList = redis.mget(keyList);
 
-        pagedGridResult.setRows(indexArticleVOList);
-        return pagedGridResult;
+        // 2. Convert string value to integer
+        List<Integer> countList = new ArrayList<>();
+        for (String countStr : countStrList) {
+            if (StringUtils.isBlank(countStr)) {
+                countList.add(0);
+            } else {
+                countList.add(Integer.valueOf(countStr));
+            }
+        }
+        return countList;
     }
 
 }

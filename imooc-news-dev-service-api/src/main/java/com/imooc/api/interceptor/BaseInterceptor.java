@@ -10,9 +10,10 @@ public class BaseInterceptor {
     public static final String REDIS_USER_TOKEN = "token:user:";
     public static final String REDIS_USER_INFO = "info:user:";
     public static final String REDIS_ADMIN_TOKEN = "token:admin:";
+    public static final String REDIS_READ_IP = "ip:read:";
 
     @Autowired
-    private RedisOperator redis;
+    public RedisOperator redis;
 
     public boolean verifyIdToken(String id, String token, String redis_prefix) {
         if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(token)) {

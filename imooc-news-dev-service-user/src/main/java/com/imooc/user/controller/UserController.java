@@ -81,14 +81,6 @@ public class UserController extends BaseController implements UserControllerApi 
         return GraceJSONResult.ok(userVOList);
     }
 
-    private Integer getCountFromRedis(String key) {
-        String countStr = redis.get(key);
-        if (StringUtils.isBlank(countStr)) {
-            countStr = "0";
-        }
-        return Integer.valueOf(countStr);
-    }
-
     private AppUser getUser(String userId) {
         AppUser user;
         String userJson = redis.get(REDIS_USER_INFO + userId);

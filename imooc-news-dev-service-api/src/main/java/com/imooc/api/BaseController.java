@@ -1,5 +1,8 @@
 package com.imooc.api;
 
+import com.imooc.utils.RedisOperator;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -16,13 +19,15 @@ import java.util.Map;
 public class BaseController {
 
     public static final String MOBILE_SMSCODE = "sms:mobile:";
-    public static final String MOBILE_IP = "ip:mobile:";
+    public static final String MOBILE_IP = "ip:sms:";
     public static final String REDIS_USER_INFO = "info:user:";
     public static final String REDIS_ADMIN_TOKEN = "token:admin:";
     public static final String REDIS_USER_TOKEN = "token:user:";
     public static final String REDIS_CATEGORY = "category:";
     public static final String REDIS_FANS_COUNT = "count:fans:";
     public static final String REDIS_FOLLOW_COUNT = "count:follow:";
+    public static final String REDIS_READ_COUNT = "count:read:";
+    public static final String REDIS_READ_IP = "ip:read:";
     public static final Integer PAGE_DEFAULT = 0;
     public static final Integer PAGE_SIZE_DEFAULT = 10;
     public static final Integer MONTH = 30 * 24 * 60 * 60;
@@ -34,6 +39,17 @@ public class BaseController {
 
     @Value("${website.domain}")
     public String DOMAIN_NAME;
+
+    @Autowired
+    private RedisOperator redis;
+
+    public Integer getCountFromRedis(String key) {
+        String countStr = redis.get(key);
+        if (StringUtils.isBlank(countStr)) {
+            countStr = "0";
+        }
+        return Integer.valueOf(countStr);
+    }
 
     public Integer setPage(Integer page) {
         if (page == null) {
