@@ -12,7 +12,6 @@ import com.imooc.pojo.Article;
 import com.imooc.pojo.bo.ArticleBO;
 import com.imooc.utils.PagedGridResult;
 import org.apache.commons.lang3.StringUtils;
-import org.n3r.idworker.Sid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,18 +24,16 @@ import java.util.List;
 @Service
 public class ArticleServiceImpl extends BaseService implements ArticleService {
     @Autowired
-    private Sid sid;
-    @Autowired
     private ArticleMapper articleMapper;
 
     @Transactional
     @Override
-    public void createArticle(ArticleBO articleBO) {
+    public void createArticle(ArticleBO articleBO, String articleId) {
         Article article = new Article();
         BeanUtils.copyProperties(articleBO, article);
-        article.setId(sid.nextShort());
+        article.setId(articleId);
         article.setCategoryId(articleBO.getCategoryId());
-        article.setArticleStatus(ArticleReviewStatus.REVIEWING.type);
+        article.setArticleStatus(ArticleReviewStatus.SUCCESS.type);
         article.setReadCounts(0);
         article.setCommentCounts(0);
         article.setIsDelete(YesOrNo.NO.type);
@@ -58,6 +55,15 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
     @Override
     public void updateIsAppointToPublish() {
         articleMapper.updateIsAppointToPublish();
+    }
+
+    @Transactional
+    @Override
+    public void updateMongoFileId(String articleId, String mongoFileId) {
+        Article article = new Article();
+        article.setId(articleId);
+        article.setMongoFileId(mongoFileId);
+        articleMapper.updateByPrimaryKeySelective(article);
     }
 
     @Override
@@ -146,8 +152,8 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
     public void deleteArticle(String userId, String articleId) {
         Example example = getArticleExample(userId, articleId);
         Article article = new Article();
-        // set is_delete to YES
         article.setIsDelete(YesOrNo.YES.type);
+        article.setMongoFileId("");
 
         int result = articleMapper.updateByExampleSelective(article, example);
         if (result != 1) {
@@ -161,6 +167,7 @@ public class ArticleServiceImpl extends BaseService implements ArticleService {
         Example example = getArticleExample(userId, articleId);
         Article article = new Article();
         article.setArticleStatus(ArticleReviewStatus.WITHDRAW.type);
+        article.setMongoFileId("");
 
         int result = articleMapper.updateByExampleSelective(article, example);
         if (result != 1) {

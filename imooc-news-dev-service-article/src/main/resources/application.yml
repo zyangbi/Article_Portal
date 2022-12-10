@@ -30,6 +30,11 @@ spring:
     mongodb:
       uri: mongodb://127.0.0.1:27017
       database: imooc-news
+  freemarker:
+    charset: UTF-8
+    content-type: text/html
+    suffix: .ftl
+    template-loader-path: classpath:/templates/
 
 mybatis:
   type-aliases-package: com.imooc.pojo
@@ -44,3 +49,6 @@ pagehelper:
   helperDialect: mysql
   supportMethodsArguments: true
 
+freemarker:
+  html:
+    article: /usr/local/Cellar/tomcat@8/8.5.84/libexec/webapps/imooc-news/portal/static/

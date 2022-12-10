@@ -8,9 +8,11 @@ import java.util.Date;
 
 public interface ArticleService {
 
-    public void createArticle(ArticleBO articleBO);
+    public void createArticle(ArticleBO articleBO, String articleId);
 
     public void updateIsAppointToPublish();
+
+    public void updateMongoFileId(String articleId, String mongoFileId);
 
     // admin
     public PagedGridResult getArticleList(String userId, String keyword, Integer status,

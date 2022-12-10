@@ -21,11 +21,11 @@ import java.util.Date;
 public interface ArticleControllerApi {
 
     @PostMapping("/createArticle")
-    @ApiOperation(value = "create article", notes = "create article", httpMethod = "POST")
+    @ApiOperation(value = "create article", httpMethod = "POST")
     public GraceJSONResult createArticle(@RequestBody @Valid ArticleBO articleBO, BindingResult result);
 
     @PostMapping("/queryMyList")
-    @ApiOperation(value = "get article list", notes = "get article list", httpMethod = "POST")
+    @ApiOperation(value = "get article list", httpMethod = "POST")
     public GraceJSONResult getArticleList(@RequestParam @NotBlank String userId,
                                           @RequestParam String keyword,
                                           @RequestParam Integer status,
@@ -35,12 +35,12 @@ public interface ArticleControllerApi {
                                           @RequestParam Integer pageSize);
 
     @PostMapping("/delete")
-    @ApiOperation(value = "user delete article", notes = "user delete article", httpMethod = "POST")
+    @ApiOperation(value = "user delete article", httpMethod = "POST")
     public GraceJSONResult deleteArticle(@RequestParam @NotNull String userId,
                                          @RequestParam @NotNull String articleId);
 
     @PostMapping("/withdraw")
-    @ApiOperation(value = "user withdraw article", notes = "user withdraw article", httpMethod = "POST")
+    @ApiOperation(value = "user withdraw article", httpMethod = "POST")
     public GraceJSONResult withdrawArticle(@RequestParam @NotNull String userId,
                                            @RequestParam @NotNull String articleId);
 
