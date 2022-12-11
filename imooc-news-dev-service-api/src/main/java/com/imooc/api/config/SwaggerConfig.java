@@ -25,10 +25,10 @@ public class SwaggerConfig {
     @Bean
     public Docket createRestApi() {
 
-        Predicate<RequestHandler> adminPredicate = RequestHandlerSelectors.basePackage("com.imooc.admin.controller");
-        Predicate<RequestHandler> articlePredicate = RequestHandlerSelectors.basePackage("com.imooc.article.controller");
-        Predicate<RequestHandler> userPredicate = RequestHandlerSelectors.basePackage("com.imooc.user.controller");
-        Predicate<RequestHandler> filesPredicate = RequestHandlerSelectors.basePackage("com.imooc.files.controller");
+        Predicate<RequestHandler> adminPredicate = RequestHandlerSelectors.basePackage("com.imooc.admin.config");
+        Predicate<RequestHandler> articlePredicate = RequestHandlerSelectors.basePackage("com.imooc.article.config");
+        Predicate<RequestHandler> userPredicate = RequestHandlerSelectors.basePackage("com.imooc.user.config");
+        Predicate<RequestHandler> filesPredicate = RequestHandlerSelectors.basePackage("com.imooc.files.config");
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())

@@ -1,10 +1,10 @@
 package com.imooc.article.controller;
 
 import com.imooc.api.BaseController;
+import com.imooc.api.config.RabbitMQConfig;
 import com.imooc.api.controller.article.ArticleControllerApi;
 import com.imooc.article.service.ArticleService;
 import com.imooc.enums.ResponseStatusEnum;
-import com.imooc.exception.GraceException;
 import com.imooc.pojo.Article;
 import com.imooc.pojo.Category;
 import com.imooc.pojo.bo.ArticleBO;
@@ -19,9 +19,9 @@ import freemarker.template.Template;
 import org.apache.commons.io.IOUtils;
 import org.bson.types.ObjectId;
 import org.n3r.idworker.Sid;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +46,8 @@ public class ArticleController extends BaseController implements ArticleControll
     private Sid sid;
     @Autowired
     private GridFSBucket gridFSBucket;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Value("${freemarker.html.article}")
     private String articlePath;
@@ -70,8 +72,8 @@ public class ArticleController extends BaseController implements ArticleControll
             // upload article HTML to GridFS
             String mongoFileId = createArticleHTMLToGridFS(articleId);
             articleService.updateMongoFileId(articleId, mongoFileId);
-            // download article HTML to frontend
-            downloadArticleHTMLToConsumer(articleId, mongoFileId);
+            // send message to MQ
+            sendDownloadToMQ(articleId, mongoFileId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,8 +98,8 @@ public class ArticleController extends BaseController implements ArticleControll
     @Override
     public GraceJSONResult deleteArticle(String userId, String articleId) {
         Article article = articleService.getArticle(articleId);
-        // delete article HTML from consumer
-        deleteArticleHTMLFromConsumer(articleId);
+        // send delete message to MQ
+        sendDeleteToMQ(articleId);
         // delete article HTML from GridFS
         gridFSBucket.delete(new ObjectId(article.getMongoFileId()));
         // delete article from MySQL
@@ -108,7 +110,7 @@ public class ArticleController extends BaseController implements ArticleControll
     @Override
     public GraceJSONResult withdrawArticle(String userId, String articleId) {
         Article article = articleService.getArticle(articleId);
-        deleteArticleHTMLFromConsumer(articleId);
+        sendDeleteToMQ(articleId);
         gridFSBucket.delete(new ObjectId(article.getMongoFileId()));
         articleService.withdrawArticle(userId, articleId);
         return GraceJSONResult.ok();
@@ -133,21 +135,17 @@ public class ArticleController extends BaseController implements ArticleControll
         return mongoFileId.toString();
     }
 
-    private void downloadArticleHTMLToConsumer(String articleId, String articleMongoId) {
-        String htmlUrl = "http://writer.imoocnews.com:8001/article/html/download?articleId="
-                + articleId + "&articleMongoId=" + articleMongoId;
-        Integer status = restTemplate.getForEntity(htmlUrl, Integer.class).getBody();
-        if (status != HttpStatus.OK.value()) {
-            GraceException.display(ResponseStatusEnum.ARTICLE_REVIEW_ERROR);
-        }
+    private void sendDownloadToMQ(String articleId, String mongoFileId) {
+        // send to exchange
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_ARTICLE,
+                "article.html.download",
+                articleId + "," + mongoFileId);
     }
 
-    private void deleteArticleHTMLFromConsumer(String articleId) {
-        String deleteUrl = "http://writer.imoocnews.com:8001/article/html/delete?articleId=" + articleId;
-        Integer status = restTemplate.getForEntity(deleteUrl, Integer.class).getBody();
-        if (status != HttpStatus.OK.value()) {
-            GraceException.display(ResponseStatusEnum.ARTICLE_REVIEW_ERROR);
-        }
+    private void sendDeleteToMQ(String mongoFileId) {
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_ARTICLE,
+                "article.html.delete",
+                mongoFileId);
     }
 
     private ArticleDetailVO getArticleDetailVO(String articleId) {

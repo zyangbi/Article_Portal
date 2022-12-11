@@ -1,0 +1,27 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-swallow-size: -1
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: service-article-html
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017
+      database: imooc-news
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: imooc-news
+
+freemarker:
+  html:
+    article: /usr/local/Cellar/tomcat@8/8.5.84/libexec/webapps/imooc-news/portal/static/

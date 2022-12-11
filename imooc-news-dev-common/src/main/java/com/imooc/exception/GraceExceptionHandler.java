@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ControllerAdvice
 public class GraceExceptionHandler {
 
-    // tell the controller to handle MyCustomException
+    // tell the config to handle MyCustomException
     @ExceptionHandler(MyCustomException.class)
     @ResponseBody
     public GraceJSONResult MyCustomExceptionHandler(MyCustomException myCustomException) {

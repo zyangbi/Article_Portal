@@ -35,6 +35,12 @@ spring:
     content-type: text/html
     suffix: .ftl
     template-loader-path: classpath:/templates/
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: imooc-news
 
 mybatis:
   type-aliases-package: com.imooc.pojo
